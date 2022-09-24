@@ -41,12 +41,13 @@ var friends = []pkg.Friend{
 }
 
 // Untuk mencari data teman dengan no absen tertentu
-func findFriendByAbsentNumber(noAbsen int) (pkg.Friend, error) {
+func findFriendByAbsentNumber(noAbsen int) (friend pkg.Friend, err error) {
 	if noAbsen > len(friends) {
-		return pkg.Friend{}, errors.New("Jumlah teman di luar jangkauan")
+		err = errors.New("jumlah teman di luar jangkauan")
+		return friend, err
 	}
 
-	friend := friends[noAbsen-1]
+	friend = friends[noAbsen-1]
 	return friend, nil
 }
 
@@ -57,21 +58,34 @@ func printFriendName(friend pkg.Friend) {
 	fmt.Println("Alasan Pilih Kelas Golang\t: ", friend.AlasanPilihKelasGolang)
 }
 
-func main() {
-	args := os.Args
+func parseArgs(args []string) (noAbsen int, err error) {
 	if len(args) < 2 {
-		fmt.Println("Argumen tidak boleh kosong")
-	} else if len(args) == 2 {
-		noAbsen, _ := strconv.Atoi(args[1])
-		friend, err := findFriendByAbsentNumber(noAbsen)
+		err = errors.New("Tidak ada argument yang dikirim")
+		return -1, err
+	} else if len(args) > 2 {
+		err = errors.New("Hanya menerima satu argument. Tidak boleh lebih dari satu")
+		return -1, err
+	} else {
+		noAbsen, err = strconv.Atoi(args[1])
 		if err != nil {
 			panic(err.Error())
 		}
 
-		printFriendName(friend)
-
-	} else {
-		fmt.Println("Argumen tidak boleh lebih dari satu")
+		return noAbsen, nil
 	}
+}
+
+func main() {
+	noAbsen, err := parseArgs(os.Args)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	friend, err := findFriendByAbsentNumber(noAbsen)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	printFriendName(friend)
 
 }
