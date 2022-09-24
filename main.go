@@ -2,11 +2,13 @@ package main
 
 import (
 	"dts-h8-assignment-1/pkg"
+	"errors"
 	"fmt"
 	"os"
+	"strconv"
 )
 
-var karyawan = []pkg.Karyawan{
+var friends = []pkg.Friend{
 	{
 		Nama:                   "Mbah Kekong",
 		Alamat:                 "Bikini Bottom",
@@ -38,7 +40,38 @@ var karyawan = []pkg.Karyawan{
 	},
 }
 
+// Untuk mencari data teman dengan no absen tertentu
+func findFriendByAbsentNumber(noAbsen int) (pkg.Friend, error) {
+	if noAbsen > len(friends) {
+		return pkg.Friend{}, errors.New("Jumlah teman di luar jangkauan")
+	}
+
+	friend := friends[noAbsen-1]
+	return friend, nil
+}
+
+func printFriendName(friend pkg.Friend) {
+	fmt.Println("Nama\t\t\t\t: ", friend.Nama)
+	fmt.Println("Alamat\t\t\t\t: ", friend.Alamat)
+	fmt.Println("Pekerjaan\t\t\t: ", friend.Pekerjaan)
+	fmt.Println("Alasan Pilih Kelas Golang\t: ", friend.AlasanPilihKelasGolang)
+}
+
 func main() {
-	a := os.Args
-	fmt.Println(a)
+	args := os.Args
+	if len(args) < 2 {
+		fmt.Println("Argumen tidak boleh kosong")
+	} else if len(args) == 2 {
+		noAbsen, _ := strconv.Atoi(args[1])
+		friend, err := findFriendByAbsentNumber(noAbsen)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		printFriendName(friend)
+
+	} else {
+		fmt.Println("Argumen tidak boleh lebih dari satu")
+	}
+
 }

@@ -1,6 +1,6 @@
 package pkg
 
-type Karyawan struct {
+type Friend struct {
 	Nama                   string
 	Alamat                 string
 	Pekerjaan              string
